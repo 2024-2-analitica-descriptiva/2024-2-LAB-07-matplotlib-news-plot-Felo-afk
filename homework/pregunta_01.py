@@ -85,4 +85,4 @@ def pregunta_01():
     create_plot(df, r"files\plots", "news.png")
 
 
-pregunta_01()
+pregunta_01()  # Running
