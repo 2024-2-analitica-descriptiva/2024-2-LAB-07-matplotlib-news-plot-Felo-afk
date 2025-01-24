@@ -27,59 +27,76 @@ def pregunta_01():
 
     def create_plot(df, output_dir, filename):
         plt.figure()
-        colors = {
+        plt.title("How people get their news", fontsize=16)
+
+        # quitar bordes
+        plt.gca().spines["top"].set_visible(False)
+        plt.gca().spines["right"].set_visible(False)
+        plt.gca().spines["left"].set_visible(False)
+        plt.gca().axes.get_yaxis().set_visible(False)
+
+        colores = {
             "Television": "dimgray",
-            "Newspaper": "grey",
+            "Radio": "lightgray",
             "Internet": "tab:blue",
-            "Radio": "lightgrey",
+            "Newspaper": "grey",
         }
-        zorder = {
-            "Television": 1,
-            "Newspaper": 1,
-            "Internet": 2,
-            "Radio": 1,
-        }
-        linewidths = {
-            "Television": 2,
-            "Newspaper": 2,
-            "Internet": 3,
-            "Radio": 2,
-        }
+
+        posicion = {"Television": 1, "Radio": 1, "Internet": 2, "Newspaper": 1}
+
+        ancho = {"Television": 1.5, "Radio": 1.5, "Internet": 3, "Newspaper": 1.5}
+
         for col in df.columns:
+            # lineas
             plt.plot(
                 df[col],
+                color=colores[col],
                 label=col,
-                color=colors[col],
-                zorder=zorder[col],
-                linewidth=linewidths[col],
-            )
-        plt.title("How people get their news", fontsize=16)
-        plt.gca().spines["top"].set_visible(False)
-        plt.gca().spines["left"].set_visible(False)
-        plt.gca().spines["right"].set_visible(False)
-        plt.gca().axes.get_yaxis().set_visible(False)
-        for col in df.columns:
-            first_year = df.index[0]
-            plt.scatter(
-                x=first_year,
-                y=df[col][first_year],
-                color=colors[col],
-                zorder=zorder[col],
+                zorder=posicion[col],
+                linewidth=ancho[col],
             )
 
-            last_year = df.index[-1]
+            # puntos
+            primer_valor = df.index[0]
             plt.scatter(
-                x=last_year, y=df[col][last_year], color=colors[col], zorder=zorder[col]
+                x=primer_valor,
+                y=df[col][primer_valor],
+                color=colores[col],
             )
+            ultimo_valor = df.index[-1]
+            plt.scatter(
+                x=ultimo_valor,
+                y=df[col][ultimo_valor],
+                color=colores[col],
+            )
+
+            # etiquetas
+            plt.text(
+                x=primer_valor - 0.2,
+                y=df[col][primer_valor],
+                s=col + " " + str(df[col][primer_valor]) + "%",
+                color=colores[col],
+                ha="right",
+                va="center",
+            )
+            plt.text(
+                x=ultimo_valor + 0.2,
+                y=df[col][ultimo_valor],
+                s=str(df[col][ultimo_valor]) + "%",
+                color=colores[col],
+                ha="left",
+                va="center",
+            )
+        plt.xticks(ticks=df.index, labels=df.index, ha="center")
 
         plt.legend(loc="upper right")
-        plt.tight_layout()
+
+        # guardar
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, filename))
         plt.close()
-        plt.show
 
     df = read_data(r"files\input\news.csv")
     create_plot(df, r"files\plots", "news.png")
