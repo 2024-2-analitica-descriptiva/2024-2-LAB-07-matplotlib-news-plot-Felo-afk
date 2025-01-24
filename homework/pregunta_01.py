@@ -7,6 +7,7 @@ Escriba el codigo que ejecute la accion solicitada en cada pregunta.
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import glob
 
 
 def pregunta_01():
@@ -22,8 +23,8 @@ def pregunta_01():
     """
 
     def read_data(dir):
-        df = pd.read_csv(dir, index_col=0)
-        return df
+        for archivo in glob.glob(os.path.join(dir, "*.csv")):
+            return pd.read_csv(archivo, sep=",", index_col=0)
 
     def create_plot(df, output_dir, filename):
         plt.figure()
@@ -98,5 +99,8 @@ def pregunta_01():
         plt.savefig(os.path.join(output_dir, filename))
         plt.close()
 
-    df = read_data(r"files\input\news.csv")
+    df = read_data(r"files\input")
     create_plot(df, r"files\plots", "news.png")
+
+
+pregunta_01()
